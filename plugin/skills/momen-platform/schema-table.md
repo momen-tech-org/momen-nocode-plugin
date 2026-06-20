@@ -1,0 +1,147 @@
+# Database schema (tables, fields, relations, constraints)
+
+## Database Domain Knowledge
+Momen uses PostgreSQL. Data model changes require "Sync Backend" to take effect online.
+
+### Capabilities & Limitations
+You can: create and delete tables, fields, relations, and unique constraints; rename a
+table; rename a column or change its displayName / required / unique / default value.
+
+You CANNOT:
+- Change an existing column's TYPE. To change a type, delete the column and create a new
+  one with the desired type.
+- Update an existing relation or constraint. To change one, delete it and recreate it.
+- Create formula / computed fields. If the user asks for one, explain that formulas must
+  be configured manually in the editor; do not create them.
+
+### Column Types
+A column's 'type' is the UPPERCASE type name, exactly as written (it is case-sensitive).
+Basic: BIGINT, DECIMAL, TEXT (for strings/VARCHAR/CHAR), BOOLEAN, TIMESTAMPTZ, DATE,
+TIMETZ, IMAGE, VIDEO, FILE, JSONB, GEO_POINT.
+
+Put one of those values directly in a column's 'type' field (e.g. "DECIMAL"). Do NOT put a
+lowercase name or a type-identifier ("s:p:...") in 'type'.
+
+Type Identifier encoding (a SEPARATE form that appears only in type-identifier
+inputs/outputs — never in a column's 'type' field):
+- Basic types prefix with "s:p:" (e.g. "s:p:bigint", "s:p:text").
+- Optional fields prepend "null|" (e.g. "null|s:p:bigint").
+
+### Naming
+systemName: English snake_case. Tables are nouns or noun phrases, singular not plural
+("order", not "orders"), concise (e.g. "user_profile"); fields are snake_case
+(e.g. "first_name", "is_active").
+displayName: user-visible; prefer it IDENTICAL to the systemName (e.g. systemName "first_name" → displayName "first_name").
+
+### System Built-ins & Product Context
+Every table has non-deletable built-in fields: id (BIGINT), created_at (TIMESTAMPTZ),
+updated_at (TIMESTAMPTZ). Do NOT include these when creating a table.
+Any table, field, or relation where 'editable' is false is system built-in and cannot be modified or deleted.
+System tables and timezone configurations for Momen:
+* UTC Offset: +00:00
+* Protected Account Table: 'account' (can add/delete user-defined fields, but cannot delete table itself)
+* Protected Payment Tables: 'payment_record', 'recurring_payment', 'refund' (cannot be modified or deleted)
+* Protected AI/Session Tables: 'conversation', 'message', 'tool_usage_record', 'message_content' (cannot be modified or deleted)
+The system built-in AI tables are strictly for system AI functions. For user chat systems, always create custom user-defined tables (e.g. 'user_chat', 'chat_message').
+
+### Required Fields & Default Values
+When creating a new field with 'required = true', a default value must be set simultaneously, except for types that do not support default values.
+Default value formatting:
+- Numbers/Booleans: Use literal values (e.g., 10, true).
+- Dates/Times: Strictly use ISO 8601 strings (e.g., TIMESTAMPTZ: '2025-12-09T16:02:03.000Z', DATE: '2025-12-09', TIMETZ: '16:02:03+00:00').
+
+- String: Use plain strings.
+- Jsonb: Use stringified JSON objects.
+- Unsupported: IMAGE, VIDEO, FILE, and GEO_POINT do NOT support setting default values.
+
+### Relations
+Types: one_to_one, one_to_many. Defined on the source table.
+To make one table reference another, create a RELATION — never add a manual foreign-key
+column (e.g. a "*_id" field) or a column whose type is another table. The FK column and
+the virtual reference fields are generated automatically. Add the relation on the SOURCE
+table only; it is reflected on the target automatically.
+A relation is configured by five fields: source table, target table, source-side field
+display name, target-side field display name, and relation type.
+Relation record fields: relationType, sourceTableDisplayName, targetTableDisplayName,
+fieldDisplayNameInSourceTable, fieldDisplayNameInTargetTable, editable.
+Creating a relation auto-generates:
+- A non-editable FK field in the target table named fieldDisplayNameInTargetTable + "_id"
+  (e.g. "user_id", "活动_id"). Stores the source row's id. Deleted when the relation is deleted.
+- Virtual reference fields in both tables (NOT real columns), one per side:
+  fieldDisplayNameInSourceTable lives on the source; fieldDisplayNameInTargetTable lives on the target.
+Examples:
+- 1:n user (source) → post (target), source field "posts", target field "user"
+  ⇒ user has virtual list "posts"; post has virtual reference "user" and FK column "user_id".
+- 1:n post (source) → comment (target), source field "comments", target field "post"
+  ⇒ post has virtual list "comments"; comment has virtual reference "post" and FK column "post_id".
+- 1:1 user (source) → profile (target), source field "profile", target field "user"
+  ⇒ user has virtual reference "profile"; profile has virtual reference "user" and FK column "user_id".
+Relations only between editable (user-created) tables.
+Many-to-many: use an intermediate join table + two one-to-many relations.
+To unique-constrain a relation field, use the FK field name ("user_id"), not the virtual name.
+
+### Geographic Location
+Use GEO_POINT for coordinates. Never split into separate latitude/longitude fields.
+A GEO_POINT field auto-generates a companion DECIMAL hack field named
+"fz_distance_from_<systemName>", where <systemName> is the geo_point's systemName
+(may differ from its displayName). At request time it returns the distance from the
+stored geo_point to the user-supplied location in the request. Treat it as a
+distance-calculation hack — future migration: this will be replaced by formula fields.
+
+### Constraints
+Only unique constraints supported. Names: lowercase English snake_case, no uppercase.
+Combination constraints: list multiple field display names.
+
+## How to drive it (CLI only)
+
+All commands are `momen-mcp <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+between calls. **Edits do NOT go live until `schema save` + `project sync-backend`.**
+
+```bash
+momen-mcp whoami                                    # check auth; if needed: momen-mcp login
+momen-mcp project set-current --projectExId <exId>  # pin the project (momen-mcp projects search to find it)
+momen-mcp schema load                               # warm the schema session
+```
+
+Operations run through one verb:
+
+```bash
+momen-mcp schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
+```
+Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several calls in one array.
+
+## Operation reference (`schema tool-call` names)
+
+| Intent | `name` | Required `args` |
+|---|---|---|
+| List table names | `GET_ALL_TABLE_DISPLAY_NAMES` | — |
+| Inspect tables | `GET_TABLE_INFOS` | `tableDisplayNames` |
+| Create tables | `ADD_TABLES` | `items` |
+| Delete tables | `DELETE_TABLES` | `tableDisplayNames` |
+| Add fields/relations | `ADD_FIELDS_AND_RELATIONS` | `tableDisplayName`, `fields`, `relations` |
+| Add unique constraints | `ADD_CONSTRAINTS` | `constraints` |
+
+## Worked example: create a `post` table
+
+```bash
+momen-mcp schema tool-call --apply --toolCalls '[
+  {"name":"ADD_TABLES","args":{"items":[
+    {"tableDisplayName":"post","tableSystemName":"post","relations":[],"fields":[
+      {"systemName":"title","displayName":"title","basicTypeNameOrTypeId":"TEXT","required":true,"defaultValue":""},
+      {"systemName":"view_count","displayName":"view_count","basicTypeNameOrTypeId":"BIGINT","required":true,"defaultValue":0}
+    ]}
+  ]}}
+]'
+```
+
+Then ship:
+
+```bash
+momen-mcp schema validate && momen-mcp schema save && momen-mcp project sync-backend
+```
+
+## Notes & guardrails
+
+- **Destructive ops** (`DELETE_TABLES`, `DELETE_FIELDS_AND_RELATIONS`, `DELETE_CONSTRAINTS`) lose data; list what will be deleted and warn the user.
+- **Type changes** aren't editable: delete + recreate the column.
+- If results look stale, run `momen-mcp schema reload`.
