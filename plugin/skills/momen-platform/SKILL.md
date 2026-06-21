@@ -262,6 +262,7 @@ Each capability is a sibling file in this skill folder. When a task calls for on
 - **Runtime logs & debugging** (`runtime-logs.md`) — Fetch and interpret server-side runtime logs. Use when debugging a runtime error, when the user shares a traceId, or when they ask about server logs (covers log types like ACTION_FLOW, GATEWAY, SQL_GENERATION and Elasticsearch query syntax).
 - **Permissions (RBAC + ABAC)** (`permissions.md`) — Design RBAC + ABAC access control and guide its setup. Use when the project involves multiple user groups, data isolation, restricted actions, 403 errors, or table/column/row permissions and relation-first tenant isolation.
 - **Payments (Stripe)** (`payments.md`) — Design and wire up payments and guide their setup. Use when the project involves checkout, orders, subscriptions, or refunds (covers order-table design, the auto-created payment Actionflows, the webhook idempotency contract, and secure order creation).
+- **Documentation search** (`docs.md`) — Load when you need general platform guidance, references, or specific step-by-step documentation to query the official Momen developer manual.
 
 ## Driving a project from the CLI
 
