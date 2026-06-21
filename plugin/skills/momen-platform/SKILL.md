@@ -279,3 +279,5 @@ Each capability is a sibling file in this skill folder. When a task calls for on
 ```
 
 Pass every argument as a named `--flag` (or `--args '<json>'` for verbs without flags); bare positional operands are ignored — e.g. `project set-current --projectExId <exId>`, never `project set-current <exId>`. Irreversible project verbs (`project reset`, `project delete`) need a human GUI confirm; in headless automation set `MCP_HITL=off` and pass `confirmProjectExId=<exId>` (or `force=true`).
+
+**Diagnosing CLI/daemon failures:** run `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" --help` — its **Logs** section prints the resolved log-file path and the override env vars (`MCP_LOG_DIR`, `MCP_LOG_LEVEL=debug` or `verbose`, `MCP_LOG_FILE=off`). By default the CLI logs under `<workspace>/.momen-mcp/logs/` and the background daemon under `<workspace>/.momen-mcp/daemon/logs/` (workspace = `--cwd` or the current directory). These are the tool's own diagnostics — distinct from your deployed app's runtime logs (`runtime-logs.md`).
