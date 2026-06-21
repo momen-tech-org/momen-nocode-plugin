@@ -277,3 +277,5 @@ Each capability is a sibling file in this skill folder. When a task calls for on
 #   ... read the matching capability sub-document (see Capabilities above), then edit ...
 "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```
+
+Pass every argument as a named `--flag` (or `--args '<json>'` for verbs without flags); bare positional operands are ignored — e.g. `project set-current --projectExId <exId>`, never `project set-current <exId>`. Irreversible project verbs (`project reset`, `project delete`) need a human GUI confirm; in headless automation set `MCP_HITL=off` and pass `confirmProjectExId=<exId>` (or `force=true`).

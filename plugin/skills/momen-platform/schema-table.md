@@ -139,9 +139,25 @@ Then ship:
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```
+`schema save` / `project sync-backend` abort with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — apply at least one change (`--apply`) before shipping.
 
 ## Notes & guardrails
 
+- **Column type** goes in `basicTypeNameOrTypeId` using the same UPPERCASE `ColumnType` names from *Column Types* above (`TEXT`, `BIGINT`, `DECIMAL`, …).
 - **Destructive ops** (`DELETE_TABLES`, `DELETE_FIELDS_AND_RELATIONS`, `DELETE_CONSTRAINTS`) lose data; list what will be deleted and warn the user.
 - **Type changes** aren't editable: delete + recreate the column.
 - If results look stale, run `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema reload`.
+
+## Reading & writing deployed rows (supportservice)
+
+These verbs hit the **deployed** database, not the editor model, and take a single `--args` JSON blob (no per-field flags). `tableName` must be a real deployed table (`account`, your synced user tables, …); an unknown name fails server-side with `Unknown type '<name>_bool_exp'`.
+
+```bash
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support query  --args '{"tableName":"post","where":{"id":{"_eq":1}},"limit":20,"fields":["id","title"]}'
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support insert --args '{"tableName":"post","objects":[{"title":"hi"}],"fields":["id"]}'
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support update --args '{"tableName":"post","where":{"id":{"_eq":1}},"set":{"title":"bye"}}'
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support delete --args '{"tableName":"post","where":{"id":{"_eq":1}}}'
+```
+- `insert` must supply every NOT-NULL column; object keys are the column **systemName**.
+- `update` / `delete` require `where` unless you pass `allowUpdateAll` / `allowDeleteAll=true`.
+- `affected_rows` is authoritative; `returning` can be empty when row-level read permission hides the row.

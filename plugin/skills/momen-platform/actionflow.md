@@ -92,3 +92,4 @@ Then ship:
 ```bash
 "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```
+`schema save` / `project sync-backend` abort with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — apply at least one change (`--apply`) before shipping.
