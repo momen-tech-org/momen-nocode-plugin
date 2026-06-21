@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "momen-mcp version-check || true"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp\" version-check || true"
           }
         ]
       }

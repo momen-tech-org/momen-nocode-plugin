@@ -218,8 +218,8 @@ Format: - {relative_path}: {page_title}
 Read-only — no schema session needed.
 
 ```bash
-momen-mcp docs search --query "how to configure stripe payments"
-momen-mcp docs get-page --path "/03_data/01_database_basics"
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" docs search --query "how to configure stripe payments"
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" docs get-page --path "/03_data/01_database_basics"
 ```
 
 `docs search` returns `{ path, title, url }` ranked by relevance. Cite `url` when non-null; when null the page has no public link, so use it only for grounding (never fabricate a link). Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.

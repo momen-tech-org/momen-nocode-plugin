@@ -266,12 +266,14 @@ Each capability is a sibling file in this skill folder. When a task calls for on
 
 ## Driving a project from the CLI
 
+> **Always invoke the CLI exactly as written above** — via `${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp` — never bare `momen-mcp`, even though `--help` prints its own name that way. A globally-installed `momen-mcp` (or `momen`) on `PATH` would otherwise shadow this plugin's pinned build.
+
 ```bash
-momen-mcp login                                     # browser auth (once)
-momen-mcp projects search --projectName "My App"    # find the project exId
-momen-mcp project set-current --projectExId <exId>  # pin it
-momen-mcp project metadata                          # plan, capabilities, deployment
-momen-mcp schema load                               # warm the data-model session
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login                                     # browser auth (once)
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search --projectName "My App"    # find the project exId
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin it
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project metadata                          # plan, capabilities, deployment
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the data-model session
 #   ... read the matching capability sub-document (see Capabilities above), then edit ...
-momen-mcp schema validate && momen-mcp schema save && momen-mcp project sync-backend
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```

@@ -5,8 +5,10 @@ bundled server (`dist/server.mjs`) is copied by the esbuild build. Regenerate wi
 `node build_scripts/gen-skills.mjs`.
 
 The `momen-platform` skill orients Claude Code on building Momen projects (the
-pre-type-system-refactor bundle) and routes to capability sub-documents. The `momen-mcp` binary is
-placed on PATH via `bin/`, so the skill's CLI recipes run as-is.
+pre-type-system-refactor bundle) and routes to capability sub-documents. Its CLI recipes invoke the
+bundled launcher by absolute path (`${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp`) rather than as a bare
+command, so a globally-installed `momen-mcp` (or `momen`) on PATH can't shadow the plugin's
+pinned build.
 
 ## Local use
 

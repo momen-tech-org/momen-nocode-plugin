@@ -100,6 +100,6 @@ Payment enablement and Stripe configuration are editor-only (Settings → Paymen
 Context helpers (read-only):
 
 ```bash
-momen-mcp project metadata
-momen-mcp logs search --customQueryCondition '<es-condition>'
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project metadata
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" logs search --customQueryCondition '<es-condition>'
 ```

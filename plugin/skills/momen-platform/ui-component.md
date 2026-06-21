@@ -40,19 +40,19 @@ Primary breakpoint is Desktop; changes propagate unless overridden per breakpoin
 
 ## How to drive it (CLI only)
 
-All commands are `momen-mcp <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+All commands are `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
 between calls. **Edits do NOT go live until `schema save` + `project sync-backend`.**
 
 ```bash
-momen-mcp whoami                                    # check auth; if needed: momen-mcp login
-momen-mcp project set-current --projectExId <exId>  # pin the project (momen-mcp projects search to find it)
-momen-mcp schema load                               # warm the schema session
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" whoami                                    # check auth; if needed: "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search to find it)
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the schema session
 ```
 
 Operations run through one verb:
 
 ```bash
-momen-mcp schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
 ```
 Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several calls in one array.
 
@@ -71,5 +71,5 @@ Add children of LIST/TAB_VIEW/SELECT_VIEW/CONDITIONAL_VIEW into their built-in s
 Then ship:
 
 ```bash
-momen-mcp schema validate && momen-mcp schema save && momen-mcp project sync-backend
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```

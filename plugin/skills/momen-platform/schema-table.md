@@ -94,19 +94,19 @@ Combination constraints: list multiple field display names.
 
 ## How to drive it (CLI only)
 
-All commands are `momen-mcp <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+All commands are `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
 between calls. **Edits do NOT go live until `schema save` + `project sync-backend`.**
 
 ```bash
-momen-mcp whoami                                    # check auth; if needed: momen-mcp login
-momen-mcp project set-current --projectExId <exId>  # pin the project (momen-mcp projects search to find it)
-momen-mcp schema load                               # warm the schema session
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" whoami                                    # check auth; if needed: "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search to find it)
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the schema session
 ```
 
 Operations run through one verb:
 
 ```bash
-momen-mcp schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
 ```
 Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several calls in one array.
 
@@ -124,7 +124,7 @@ Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several cal
 ## Worked example: create a `post` table
 
 ```bash
-momen-mcp schema tool-call --apply --toolCalls '[
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --apply --toolCalls '[
   {"name":"ADD_TABLES","args":{"items":[
     {"tableDisplayName":"post","tableSystemName":"post","relations":[],"fields":[
       {"systemName":"title","displayName":"title","basicTypeNameOrTypeId":"TEXT","required":true,"defaultValue":""},
@@ -137,11 +137,11 @@ momen-mcp schema tool-call --apply --toolCalls '[
 Then ship:
 
 ```bash
-momen-mcp schema validate && momen-mcp schema save && momen-mcp project sync-backend
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
 ```
 
 ## Notes & guardrails
 
 - **Destructive ops** (`DELETE_TABLES`, `DELETE_FIELDS_AND_RELATIONS`, `DELETE_CONSTRAINTS`) lose data; list what will be deleted and warn the user.
 - **Type changes** aren't editable: delete + recreate the column.
-- If results look stale, run `momen-mcp schema reload`.
+- If results look stale, run `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema reload`.

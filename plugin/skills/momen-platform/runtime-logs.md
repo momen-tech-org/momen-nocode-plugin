@@ -25,8 +25,8 @@ Logs fetched in a ±5-minute window around requestCreatedAt (defaults to now).
 Read-only — no session load or save needed.
 
 ```bash
-momen-mcp project set-current --projectExId <exId>
-momen-mcp logs search --customQueryCondition 'traceId: "abc-123"' --types ACTION_FLOW ACTION_FLOW_NODE --levels ERROR
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>
+"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" logs search --customQueryCondition 'traceId: "abc-123"' --types ACTION_FLOW ACTION_FLOW_NODE --levels ERROR
 ```
 - `--customQueryCondition` is Elasticsearch syntax (e.g. `traceId: "..."`, `message.request.operationName: "MyOp"`).
 - `--types`: GATEWAY, ACTION_FLOW, ACTION_FLOW_NODE, ACTION_FLOW_CONTEXT_LOG, DEPLOYMENT, TPA, TRIGGER, SQL_GENERATION, GQL, ZAI. `--levels`: INFO, WARNING, ERROR.
