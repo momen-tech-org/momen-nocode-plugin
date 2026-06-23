@@ -112,6 +112,6 @@ The CLI cannot change permission configuration â€” it is editor-only (Settings â
 Context helpers (read-only):
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project metadata
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" logs search --customQueryCondition '<es-condition>'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project metadata
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" logs search --customQueryCondition '<es-condition>'
 ```

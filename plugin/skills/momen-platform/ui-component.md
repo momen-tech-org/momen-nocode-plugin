@@ -40,21 +40,21 @@ Primary breakpoint is Desktop; changes propagate unless overridden per breakpoin
 
 ## How to drive it (CLI only)
 
-All commands are `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
-between calls. **Edits do NOT go live until `schema save` + `project sync-backend`.**
+All commands are `"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+between calls. **Edits do NOT go live until `project sync-backend`.**
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" whoami                                    # check auth; if needed: "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search to find it)
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the schema session
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" whoami                                    # check auth; if needed: "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" login
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" projects search to find it)
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema load                               # warm the schema session
 ```
 
 Operations run through one verb:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]'
 ```
-Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several calls in one array.
+Each call is applied immediately — any resulting CRDT patch is uploaded. Batch several calls in one array; use `schema undo` to revert the last change.
 
 ## Operation reference (`schema tool-call` names)
 
@@ -66,11 +66,11 @@ Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several cal
 | Update a component | `UPDATE_COMPONENT` | `componentId` |
 | Delete components | `DELETE_COMPONENTS` | `componentIds` |
 
-Add children of LIST/TAB_VIEW/SELECT_VIEW/CONDITIONAL_VIEW into their built-in slots, not directly onto the component. Every component except PAGE/MODAL needs a layout container as parent.
+Add children of LIST/TAB_VIEW/SELECT_VIEW/CONDITIONAL_VIEW into their built-in slots, not directly onto the component. Every component except PAGE/MODAL needs a layout container as parent. Bind component properties to data with `data-binding.md`.
 
 Then ship:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema validate && "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project sync-backend
 ```
-`schema save` / `project sync-backend` abort with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — apply at least one change (`--apply`) before shipping.
+`project sync-backend` aborts with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — make at least one change before shipping.

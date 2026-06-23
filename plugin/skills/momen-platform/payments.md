@@ -18,8 +18,9 @@ the order table and guides the user through editing the auto-created flows.
 The order table is a normal business table you create; the payment engine references one of
 its rows by its primary-key id (the `orderId` everywhere below). At minimum it needs:
 - an **amount/price** column — type `DECIMAL`, the authoritative price computed server-side.
-- a **status** column — model it as an `ENUM` whose options mirror the payment lifecycle
-  (e.g. `pending`, `paid`, `cancelled`, `refunded`); your fulfillment flow updates it.
+- a **status** column — model it as a `TEXT` column holding the lifecycle value (e.g.
+  `pending`, `paid`, `cancelled`, `refunded`); your fulfillment flow updates it. Enums are
+  not available without the refactored type system, so use TEXT here.
 - a **buyer link** — do NOT add a raw `user_id`/`account_id` column. Create a 1:n RELATION
   from `account` to the order table so the buyer FK is generated automatically (the same
   manual-foreign-key rule the database plugin enforces). Add product/quantity links as
@@ -100,6 +101,6 @@ Payment enablement and Stripe configuration are editor-only (Settings → Paymen
 Context helpers (read-only):
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project metadata
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" logs search --customQueryCondition '<es-condition>'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project metadata
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" logs search --customQueryCondition '<es-condition>'
 ```

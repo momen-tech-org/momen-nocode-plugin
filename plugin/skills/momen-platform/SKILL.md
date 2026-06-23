@@ -266,18 +266,20 @@ Each capability is a sibling file in this skill folder. When a task calls for on
 
 ## Driving a project from the CLI
 
-> **Always invoke the CLI exactly as written above** — via `${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp` — never bare `momen-mcp`, even though `--help` prints its own name that way. A globally-installed `momen-mcp` (or `momen`) on `PATH` would otherwise shadow this plugin's pinned build.
+> **Always invoke the CLI exactly as written above** — via `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp` — never bare `momen-mcp`, even though `--help` prints its own name that way. The `${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}` fallback resolves the plugin root under both Codex (`PLUGIN_ROOT`) and Claude Code (`CLAUDE_PLUGIN_ROOT`); a globally-installed `momen-mcp` (or `momen`) on `PATH` would otherwise shadow this plugin's pinned build.
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login                                     # browser auth (once)
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search --projectName "My App"    # find the project exId
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin it
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project metadata                          # plan, capabilities, deployment
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the data-model session
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" whoami                                    # check auth; re-run "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" login if expired
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" projects search --projectName "My App"    # find the project exId
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project set-current --projectExId <exId>  # pin it for schema work (project verbs also take --projectExId)
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project metadata                          # plan, capabilities, deployment
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema load                               # warm the data-model session
 #   ... read the matching capability sub-document (see Capabilities above), then edit ...
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema validate && "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project sync-backend
 ```
 
-Pass every argument as a named `--flag` (or `--args '<json>'` for verbs without flags); bare positional operands are ignored — e.g. `project set-current --projectExId <exId>`, never `project set-current <exId>`. Irreversible project verbs (`project reset`, `project delete`) need a human GUI confirm; in headless automation set `MCP_HITL=off` and pass `confirmProjectExId=<exId>` (or `force=true`).
+Pass every argument as a named `--flag` (or `--args '<json>'` for verbs without flags); bare positional operands are ignored — e.g. `project set-current --projectExId <exId>`, never `project set-current <exId>`. Lifecycle verbs take the project explicitly: `project rename --projectExId <exId> --projectName "<new>"`. `project reset` and `project delete` are irreversible — they need a human GUI confirm, so in headless automation set `MCP_HITL=off` and pass `confirmProjectExId=<exId>` (or `force=true`).
 
-**Diagnosing CLI/daemon failures:** run `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" --help` — its **Logs** section prints the resolved log-file path and the override env vars (`MCP_LOG_DIR`, `MCP_LOG_LEVEL=debug` or `verbose`, `MCP_LOG_FILE=off`). By default the CLI logs under `<workspace>/.momen-mcp/logs/` and the background daemon under `<workspace>/.momen-mcp/daemon/logs/` (workspace = `--cwd` or the current directory). These are the tool's own diagnostics — distinct from your deployed app's runtime logs (`runtime-logs.md`).
+Each capability sub-document lists operations by their raw `schema tool-call` op `name` (e.g. `ADD_TABLES`) and an **Arguments** section whose shapes + field docs are generated from ztype's tool schema — the source of truth. (As an MCP server, the same operations are exposed as `schema_*` tools with an `op=` selector, e.g. `schema_table op=ADD_TABLES`; both reach the same engine.)
+
+**Diagnosing CLI/daemon failures:** run `"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" --help` — its **Logs** section prints the resolved log-file path and the override env vars (`MCP_LOG_DIR`, `MCP_LOG_LEVEL=debug` or `verbose`, `MCP_LOG_FILE=off`). By default the CLI logs under `<workspace>/.momen-mcp/logs/` and the background daemon under `<workspace>/.momen-mcp/daemon/logs/` (workspace = `--cwd` or the current directory). These are the tool's own diagnostics — distinct from your deployed app's runtime logs (`runtime-logs.md`).

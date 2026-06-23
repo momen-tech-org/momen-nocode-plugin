@@ -3,7 +3,7 @@
   "owner": {
     "name": "Momen"
   },
-  "description": "Momen no-code platform plugin for Claude Code.",
+  "description": "Momen no-code platform plugin for Claude Code and Codex.",
   "plugins": [
     {
       "name": "momen-nocode",

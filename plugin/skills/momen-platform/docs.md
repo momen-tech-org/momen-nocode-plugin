@@ -8,79 +8,6 @@ Format: - {relative_path}: {page_title}
 
 * /
   - /: Introduction & Pathways
-* /01_getting_started
-  - /01_getting_started/04_editor_workflow: Editor Workflow
-  - /01_getting_started/05_hello_world: 5-Minute Tutorial: To-Do List
-  - /01_getting_started/06_full_stack_tutorial: Full Stack Tutorial
-* /02_design
-  - /02_design/01_layout_concepts: Layout & Position
-  - /02_design/02_studio_basics: Studio Basics
-  - /02_design/03_reference/display_components: Display Components
-  - /02_design/03_reference/input_components: Input Components
-  - /02_design/03_reference/layout_components: Layout Components
-  - /02_design/03_reference/other_components: Other Components
-* /03_data
-  - /03_data/01_concepts: Core Concepts: Data Flow
-  - /03_data/02_guides/data_binding_usage: Data Binding Usage
-  - /03_data/02_guides/database_setup: Database Setup
-  - /03_data/02_guides/resource_manager: Resource Manager
-  - /03_data/02_guides/variable_management: Variable Management
-  - /03_data/03_reference/data_dictionary: Data Dictionary
-  - /03_data/03_reference/formulas: Formulas
-* /04_action
-  - /04_action/02_guides/ai_integration: AI Integration
-  - /04_action/02_guides/api_integration: API Integration
-  - /04_action/02_guides/building_action_flows: Building Actionflows
-  - /04_action/02_guides/database_operations: Database Operations
-  - /04_action/02_guides/payment_setup: Payment Setup (Stripe)
-  - /04_action/02_guides/sso_configuration: SSO Configuration
-  - /04_action/03_reference/flow_node_list: Actionflow Triggers & Nodes
-  - /04_action/03_reference/frontend_action_list: Frontend Trigger & Action List
-* /05_best_practices
-  - /05_best_practices/01_ai_copilot_workflow: AI Copilot Workflow
-  - /05_best_practices/02_scenarios/ai_chat_app: AI Chat App (Needs Analysis Bot)
-  - /05_best_practices/02_scenarios/ecommerce_system: E-commerce System
-  - /05_best_practices/02_scenarios/full_account_system: Building a Full Account System
-  - /05_best_practices/02_scenarios/seo_config: SEO Configuration
-  - /05_best_practices/02_scenarios/social_interaction: Social Interactions
-  - /05_best_practices/02_scenarios/wechat_ecosystem: WeChat Ecosystem
-  - /05_best_practices/03_performance/query_logic_opt: Query & Logic Optimization
-  - /05_best_practices/03_performance/view_hierarchy_opt: View Hierarchy Optimization
-  - /05_best_practices/04_security/concurrency_safety: Concurrency Safety
-  - /05_best_practices/04_security/validation_masking: Validation & Masking
-* /06_publish_operate
-  - /06_publish_operate/01_lifecycle: Lifecycle Management
-  - /06_publish_operate/02_upgrades_resources: Upgrades & Resources
-  - /06_publish_operate/03_app_security_rbac: App Security & RBAC
-  - /06_publish_operate/04_domain_growth: Domain & Growth
-  - /06_publish_operate/05_multi_platform: Multi-Platform Distribution
-  - /06_publish_operate/06_team_collaboration: Team Collaboration & Wallet
-  - /06_publish_operate/07_monitoring_logs: Monitoring & Logs
-  - /06_publish_operate/08_reference/error_dictionary: Error Code Dictionary
-  - /06_publish_operate/08_reference/faq: Common Issues (FAQ)
-  - /06_publish_operate/08_reference/publish_types: Publish Types
-  - /06_publish_operate/08_reference/resource_limits: Resource Limits
-* /07_developers
-  - /07_developers/01_headless_mode: Headless Mode Guide
-  - /07_developers/02_ai_coding_workflow: AI Coding Workflow
-  - /07_developers/03_code_component_dev: Code Component Dev
-  - /07_developers/04_code_block_node_dev: Code Block Node Dev
-  - /07_developers/05_backend_api_reference: Backend API Reference
-* /08_templates
-  - /08_templates/01_index: Template Center
-  - /08_templates/02_ai_feedback_tool: AI Feedback Tool
-  - /08_templates/03_ai_help_center: AI Help Center
-  - /08_templates/04_ai_knowledge_base: AI Knowledge Base
-  - /08_templates/05_ai_mental_health_assistant: AI Mental Health Assistant
-  - /08_templates/06_angry_dietitian: Angry Dietitian
-  - /08_templates/07_blog: Blog Template Guide
-  - /08_templates/08_feedback_tool: Feedback Tool (Canny Alternative)
-  - /08_templates/09_mobile_auto_repair: Mobile Auto Repair AI Scheduler
-  - /08_templates/10_online_courses: Online Courses (Udemy Alternative)
-  - /08_templates/11_portfolio: Portfolio Template
-  - /08_templates/12_saas_corporate_site: SaaS Corporate Site
-* /09_changelog
-  - /09_changelog/01_latest: Latest Product Update
 * /account_community
   - /account_community: Account & Community
   - /account_community/collaboration: Collaboration
@@ -218,8 +145,8 @@ Format: - {relative_path}: {page_title}
 Read-only — no schema session needed.
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" docs search --query "how to configure stripe payments"
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" docs get-page --path "/03_data/01_database_basics"
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" docs search --query "how to configure stripe payments"
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" docs get-page --path "/03_data/01_database_basics"
 ```
 
-`docs search` returns `{ path, title, url }` ranked by relevance. Cite `url` when non-null; when null the page has no public link, so use it only for grounding (never fabricate a link). Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.
+`docs search` returns `{ path, title, url }` ranked by relevance; `url` is a public HTTPS link you can cite. Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.

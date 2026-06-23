@@ -24,7 +24,7 @@ lowercase name or a type-identifier ("s:p:...") in 'type'.
 
 Type Identifier encoding (a SEPARATE form that appears only in type-identifier
 inputs/outputs — never in a column's 'type' field):
-- Basic types prefix with "s:p:" (e.g. "s:p:bigint", "s:p:text").
+- Basic types prefix with "s:p:" (e.g. "s:p:bigint", "s:p:string").
 - Optional fields prepend "null|" (e.g. "null|s:p:bigint").
 
 ### Naming
@@ -94,21 +94,21 @@ Combination constraints: list multiple field display names.
 
 ## How to drive it (CLI only)
 
-All commands are `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
-between calls. **Edits do NOT go live until `schema save` + `project sync-backend`.**
+All commands are `"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+between calls. **Edits do NOT go live until `project sync-backend`.**
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" whoami                                    # check auth; if needed: "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" login
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" projects search to find it)
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema load                               # warm the schema session
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" whoami                                    # check auth; if needed: "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" login
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project set-current --projectExId <exId>  # pin the project ("${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" projects search to find it)
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema load                               # warm the schema session
 ```
 
 Operations run through one verb:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]' [--apply]
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]'
 ```
-Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several calls in one array.
+Each call is applied immediately — any resulting CRDT patch is uploaded. Batch several calls in one array; use `schema undo` to revert the last change.
 
 ## Operation reference (`schema tool-call` names)
 
@@ -118,13 +118,13 @@ Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several cal
 | Inspect tables | `GET_TABLE_INFOS` | `tableDisplayNames` |
 | Create tables | `ADD_TABLES` | `items` |
 | Delete tables | `DELETE_TABLES` | `tableDisplayNames` |
-| Add fields/relations | `ADD_FIELDS_AND_RELATIONS` | `tableDisplayName`, `fields`, `relations` |
+| Add fields/relations | `ADD_FIELDS_AND_RELATIONS` | `fields`, `relations`, `tableDisplayName` |
 | Add unique constraints | `ADD_CONSTRAINTS` | `constraints` |
 
 ## Worked example: create a `post` table
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema tool-call --apply --toolCalls '[
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema tool-call --toolCalls '[
   {"name":"ADD_TABLES","args":{"items":[
     {"tableDisplayName":"post","tableSystemName":"post","relations":[],"fields":[
       {"systemName":"title","displayName":"title","basicTypeNameOrTypeId":"TEXT","required":true,"defaultValue":""},
@@ -134,29 +134,44 @@ Omit `--apply` for a dry run; add it to upload the CRDT patch. Batch several cal
 ]'
 ```
 
+## Arguments (generated from ztype)
+
+Shapes and field docs below are generated from ztype's `tool-schemas.json` (the source of truth) — never hand-built. `schemaPath` is a `DiffPathComponents` array (`{key}` for an object step, `{index}` for an array step) and is always read back from a discovery call (see above), never fabricated.
+
+### `ADD_TABLES`
+- `items` *(required)*: `array<{fields: array<object>, relations: array<object>, tableApiName: string, tableDisplayName: string}>`
+
+### `ADD_FIELDS_AND_RELATIONS`
+- `fields` *(required)*: `array<{apiName: string, basicTypeNameOrTypeId: string, defaultValue: boolean | string | number, displayName: string, required: boolean}>`
+- `relations` *(required)*: `array<{fieldApiNameInSourceTable: string, fieldApiNameInTargetTable: string, fieldDisplayNameInSourceTable: string, fieldDisplayNameInTargetTable: string, relationType: string, sourceTableDisplayName: string, targetTableDisplayName: string}>`
+- `tableDisplayName` *(required)*: `string`
+
+### `ADD_CONSTRAINTS`
+- `constraints` *(required)*: `array<{constraintName: string, constraintType: string, fieldDisplayNames: array<string>, tableDisplayName: string}>`
+
 Then ship:
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema validate && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema save && "${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" project sync-backend
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema validate && "${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" project sync-backend
 ```
-`schema save` / `project sync-backend` abort with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — apply at least one change (`--apply`) before shipping.
+`project sync-backend` aborts with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — make at least one change before shipping.
 
 ## Notes & guardrails
 
 - **Column type** goes in `basicTypeNameOrTypeId` using the same UPPERCASE `ColumnType` names from *Column Types* above (`TEXT`, `BIGINT`, `DECIMAL`, …).
 - **Destructive ops** (`DELETE_TABLES`, `DELETE_FIELDS_AND_RELATIONS`, `DELETE_CONSTRAINTS`) lose data; list what will be deleted and warn the user.
 - **Type changes** aren't editable: delete + recreate the column.
-- If results look stale, run `"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" schema reload`.
+- If results look stale, run `"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" schema reload`.
 
 ## Reading & writing deployed rows (supportservice)
 
 These verbs hit the **deployed** database, not the editor model, and take a single `--args` JSON blob (no per-field flags). `tableName` must be a real deployed table (`account`, your synced user tables, …); an unknown name fails server-side with `Unknown type '<name>_bool_exp'`.
 
 ```bash
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support query  --args '{"tableName":"post","where":{"id":{"_eq":1}},"limit":20,"fields":["id","title"]}'
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support insert --args '{"tableName":"post","objects":[{"title":"hi"}],"fields":["id"]}'
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support update --args '{"tableName":"post","where":{"id":{"_eq":1}},"set":{"title":"bye"}}'
-"${CLAUDE_PLUGIN_ROOT}/bin/momen-mcp" support delete --args '{"tableName":"post","where":{"id":{"_eq":1}}}'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" support query  --args '{"tableName":"post","where":{"id":{"_eq":1}},"limit":20,"fields":["id","title"]}'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" support insert --args '{"tableName":"post","objects":[{"title":"hi"}],"fields":["id"]}'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" support update --args '{"tableName":"post","where":{"id":{"_eq":1}},"set":{"title":"bye"}}'
+"${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp" support delete --args '{"tableName":"post","where":{"id":{"_eq":1}}}'
 ```
 - `insert` must supply every NOT-NULL column; object keys are the column **systemName**.
 - `update` / `delete` require `where` unless you pass `allowUpdateAll` / `allowDeleteAll=true`.

@@ -1,0 +1,28 @@
+{
+  "name": "momen-nocode",
+  "version": "2.0.9",
+  "description": "Orientation and entry point for working on a Momen project. Load first for any Momen app task — designing or changing the data model, UI, server-side action flows, permissions, payments, or data bindings, or reading runtime logs — then follow it to the right capability. For Momen projects only; not generic programming help.",
+  "author": {
+    "name": "Momen"
+  },
+  "repository": "https://github.com/momen-tech-org/momen-nocode-plugin",
+  "keywords": [
+    "momen",
+    "no-code",
+    "mcp",
+    "app-builder"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Momen no-code",
+    "shortDescription": "Build and modify Momen apps.",
+    "longDescription": "Momen-specific guidance and CLI recipes for the data model, UI components, data bindings, server-side action flows, payments, permissions, and runtime logs.",
+    "developerName": "Momen",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ]
+  }
+}
