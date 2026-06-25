@@ -30,6 +30,23 @@ Loop: iterate over a list; inner nodes access item data.
 Send SMS - Twilio: send SMS messages.
 Gemini Veo 3.1: generate 8-second video clips (async only).
 
+### Choosing How to Express Logic: nodes → formulas → code
+Three tiers, in order of preference:
+1. **Visual nodes** for orchestration — query / branch / iterate / write / call (Database,
+   Condition, Loop, Set Variable, Call API, Run Actionflow). They take part in the flow's
+   transaction, surface individually in logs and the edit-time error collector, and stay
+   user-editable.
+2. **Formula bindings** for value-level computation. A node value — a Set Variable value, a
+   mutation column, a condition predicate — can be a FORMULA binding built with the bindings
+   plugin, and formulas cover far more than people expect: text and regex (extract / match /
+   replace, substring, split, concat), math, date/time arithmetic and formatting, array
+   aggregation / mapping / filtering, JSON value access, and type casts. Prefer a formula over
+   code whenever you are computing a single value.
+3. **Run Code** only for genuinely procedural logic that neither a node nor a formula operator
+   expresses — e.g. cryptographic hashing / signature building, multi-step algorithms with
+   intermediate state, or assembling / parsing a complex nested payload. Keep it small and fed
+   by node inputs; never collapse a whole flow into one Run Code node.
+
 ### Variables
 Declared at flow level, accessible by all nodes, assigned with "Set Variable" node.
 
@@ -52,6 +69,9 @@ schema path — never inline. Declare flow variables with `add_global_variables`
 assign them in a Set Variable node with `add_variable_assignments`. A Run Code node's
 `args.<name>` slots are managed with `add_code_input` (rename/delete variants); fill
 the code body with `generate_code`.
+An update or delete Database node is seeded with an always-true filter that matches **every**
+row — narrow it with the bindings plugin's where conditions at the node's schema path before
+syncing, or the write hits the whole table.
 
 ### Error Handling
 Synchronous: all DB changes roll back on error.
