@@ -6,8 +6,9 @@ the frontend triggers them via "Request – Actionflow" component actions.
 
 ### Execution Modes
 Synchronous: caller blocks for the result; ACID (any node error rolls back all DB writes).
-Asynchronous: fire-and-forget; only the failing node's DB writes roll back; required for
-  AI agents and video generation.
+Asynchronous: the caller gets a task handle instead of blocking and retrieves the result
+  later — the flow still computes and returns its declared output; only the failing node's
+  DB writes roll back; required for AI agents and video generation.
 
 Both modes share a per-flow total timeout (`ACTION_FLOW_TIMEOUT_MILLISECONDS`): 15 s on
 free-tier servers, 10 min on paid tiers. The budget is for the entire flow, not per node.
@@ -137,7 +138,9 @@ per-`type` body for each is the discriminated union under `node` / `config` in *
 Block nodes (branch / for-each / while) auto-create their end + initial contents; deleting a
 block-start deletes the whole block. A DB node seeds its editable columns as empty bindings — fill
 each value at the node's `schemaPath` per `data-binding.md`, and add query `where` / gating
-conditions with the request-filter ops there. Input-param and output-field **types** are copied
+conditions with the request-filter ops there. An insert / update node must bind **at least one** column: a mutation node with no bound
+field fails `schema validate` with "Mutation updates at least one field". Input-param and
+output-field **types** are copied
 verbatim from `GET_ACTION_FLOW_SELECTABLE_TYPES` — never hand-built.
 
 > Output on **pre-refactor** projects uses `ADD_ACTION_FLOW_OUTPUT_FIELDS` / `DELETE_ACTION_FLOW_OUTPUT_FIELDS`. On post-refactor projects use `SET_ACTION_FLOW_OUTPUT` instead.

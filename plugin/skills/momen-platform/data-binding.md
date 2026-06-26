@@ -75,6 +75,12 @@ from a discovery call for the slot you want:
   `sortConfigsSchemaPath`, and `conditionSchemaPath`.
 - Component properties: discover with the component tools, then bind at the returned path.
 
+These context ops don't bootstrap from nothing — each *takes* a schemaPath and returns finer ones
+(or the options / columns at it). Your **entry** path is always echoed by the op that created the
+slot: `ADD_ACTION_FLOW_NODE`, `ADD_REQUEST_FILTER_CONDITION`, and the `CREATE_*_BINDING` ops each
+return a `schemaDiff.pathComponents` for what they just made. Build top-down — create the node /
+condition, read back its echoed path, then drill in — so you never need a path you don't already hold.
+
 ## Binding kinds
 
 Pick the `CREATE_*` op for the slot — all keyed by `schemaPath`:
