@@ -18,8 +18,9 @@ the plugin behaves identically whether installed from a marketplace or run local
     claude --plugin-dir ./plugin
     /momen-nocode:momen-platform
 
-    # Codex — discovered via the legacy-compatible .claude-plugin/marketplace.json
-    # (Codex reads it directly; no separate .agents/ marketplace is shipped)
+    # Codex
+    codex plugin marketplace add momen-tech-org/momen-nocode-plugin
+    codex plugin add momen-nocode
 
 The plugin always runs the **published** npm CLI, so local CLI changes are not exercised through it.
 To test the CLI itself, run it directly (e.g. `pnpm build && node bin/momen-mcp.js …`).
