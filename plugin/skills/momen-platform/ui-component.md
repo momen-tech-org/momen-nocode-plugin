@@ -62,11 +62,8 @@ Each call is applied immediately — any resulting CRDT patch is uploaded. Batch
 |---|---|---|
 | List pages | `GET_ALL_PAGE_NAMES` | — |
 | Component info | `GET_COMPONENT_INFO` | `componentId` |
-| Add components | `ADD_COMPONENT` | `items` |
-| Update a component | `UPDATE_COMPONENT` | `componentId` |
-| Delete components | `DELETE_COMPONENTS` | `componentIds` |
 
-Add children of LIST/TAB_VIEW/SELECT_VIEW/CONDITIONAL_VIEW into their built-in slots, not directly onto the component. Every component except PAGE/MODAL needs a layout container as parent. Bind component properties to data with `data-binding.md`.
+Component editing (create / update / delete) is not available through the CLI — make those changes in the editor. Here you can inspect the component tree; bind component properties to data with `data-binding.md`.
 
 Then ship:
 
