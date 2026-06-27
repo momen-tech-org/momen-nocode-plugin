@@ -142,7 +142,7 @@ Shapes and field docs below are generated from ztype's `tool-schemas.json` (the 
 - `items` *(required)*: `array<{fields: array<object>, relations: array<object>, tableApiName: string, tableDisplayName: string}>`
 
 ### `ADD_FIELDS_AND_RELATIONS`
-- `fields` *(required)*: `array<{apiName: string, basicTypeNameOrTypeId: string, defaultValue: boolean | string | number, displayName: string, required: boolean}>`
+- `fields` *(required)*: `array<{apiName: string, basicTypeNameOrTypeId: string, defaultValue?: boolean | string | number, displayName: string, required: boolean}>`
 - `relations` *(required)*: `array<{fieldApiNameInSourceTable: string, fieldApiNameInTargetTable: string, fieldDisplayNameInSourceTable: string, fieldDisplayNameInTargetTable: string, relationType: string, sourceTableDisplayName: string, targetTableDisplayName: string}>`
 - `tableDisplayName` *(required)*: `string`
 

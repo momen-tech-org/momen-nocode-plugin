@@ -92,7 +92,7 @@ Shapes and field docs below are generated from ztype's `tool-schemas.json` (the 
 
 ### `ADD_TPA_RESPONSE_DATA`
 - `responseBranch` *(required)*: `enum(SUCCESS|PERMANENT_FAIL|TEMPORARY_FAIL)`
-- `responseData` *(required)*: `{defaultValue: string, itemType: string, name: string, required: boolean, type: string}`
+- `responseData` *(required)*: `{defaultValue?: string, itemType?: string, name: string, required: boolean, type: string}`
 - `tpaConfigId` *(required)*: `string`
 
 Then ship:

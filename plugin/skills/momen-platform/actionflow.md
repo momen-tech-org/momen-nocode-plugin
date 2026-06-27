@@ -152,21 +152,21 @@ AI / video nodes must be async (`isAsync=true`). Discover node/ids via `GET_ACTI
 Shapes and field docs below are generated from ztype's `tool-schemas.json` (the source of truth) — never hand-built. `schemaPath` is a `DiffPathComponents` array (`{key}` for an object step, `{index}` for an array step) and is always read back from a discovery call (see above), never fabricated.
 
 ### `ADD_ACTION_FLOWS`
-- `items` *(required)*: `array<{displayName: string, isAsync: boolean, timeout: integer}>` — Action flows to create. Each is seeded with an empty body (a FLOW_START connected directly to a FLOW_END); add nodes afterwards with ADD_ACTION_FLOW_NODE.
+- `items` *(required)*: `array<{displayName: string, isAsync?: boolean, timeout?: integer}>` — Action flows to create. Each is seeded with an empty body (a FLOW_START connected directly to a FLOW_END); add nodes afterwards with ADD_ACTION_FLOW_NODE.
 
 ### `ADD_ACTION_FLOW_INPUT_PARAMS`
 - `actionFlowId` *(required)*: `string`
-- `items` *(required)*: `array<{arrayLevel: integer, name: string, type: string}>`
+- `items` *(required)*: `array<{arrayLevel?: integer, name: string, type?: string}>`
 
 ### `ADD_ACTION_FLOW_NODE`
 - `actionFlowId` *(required)*: `string`
 - `afterNodeId` *(required)*: `string` — Insert the new node immediately after this node (its uniqueId).
 - `displayName`: `string` — Optional display name; defaults to the localized node-type name.
-- `node` *(required)*: `object · type: AI_CREATE_CONVERSATION|AI_SEND_MESSAGE|AI_DELETE_CONVERSATION|AI_STOP_RESPONSE → {configId: string, taskId: string} | BRANCH_SEPARATION → {branchNames: array<string>, conditionType: enum(MUTUAL_EXCLUSION|MUTUAL_TOLERANCE)} | BREAK → {} | ACTION_FLOW → {targetActionFlowId: string} | CUSTOM_CODE → {code: string} | FOR_EACH_START → {} | INSERT_RECORD|UPDATE_RECORD|DELETE_RECORD → {tableDisplayName: string} | QUERY_RECORD → {limit: integer, tableDisplayName: string} | ADD_ROLE_TO_ACCOUNT|REMOVE_ROLE_FROM_ACCOUNT → {roleUuid: string} | TEMPLATE_CODE → {templateCodeId: string} | THIRD_PARTY_API → {} | UPDATE_GLOBAL_VARIABLES → {} | WHILE_START → {}`
+- `node` *(required)*: `object · type: AI_CREATE_CONVERSATION|AI_SEND_MESSAGE|AI_DELETE_CONVERSATION|AI_STOP_RESPONSE → {configId?: string, taskId?: string} | BRANCH_SEPARATION → {branchNames?: array<string>, conditionType?: enum(MUTUAL_EXCLUSION|MUTUAL_TOLERANCE)} | BREAK → {} | ACTION_FLOW → {targetActionFlowId?: string} | CUSTOM_CODE → {code?: string} | FOR_EACH_START → {} | INSERT_RECORD|UPDATE_RECORD|DELETE_RECORD → {tableDisplayName?: string} | QUERY_RECORD → {limit?: integer, tableDisplayName?: string} | ADD_ROLE_TO_ACCOUNT|REMOVE_ROLE_FROM_ACCOUNT → {roleUuid?: string} | TEMPLATE_CODE → {templateCodeId: string} | THIRD_PARTY_API → {} | UPDATE_GLOBAL_VARIABLES → {} | WHILE_START → {}`
 
 ### `ADD_ACTION_FLOW_OUTPUT_FIELDS`
 - `actionFlowId` *(required)*: `string`
-- `items` *(required)*: `array<{name: string, type: enum(BIGSERIAL|BIGINT|INTEGER|FLOAT8|DECIMAL|TIMESTAMPTZ|TIMETZ|DATE|INTERVAL|TEXT|… 19 total)}>`
+- `items` *(required)*: `array<{name: string, type?: enum(BIGSERIAL|BIGINT|INTEGER|FLOAT8|DECIMAL|TIMESTAMPTZ|TIMETZ|DATE|INTERVAL|TEXT|… 19 total)}>`
 
 Then ship:
 

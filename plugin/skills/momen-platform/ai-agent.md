@@ -101,11 +101,11 @@ Run AI node (`actionflow.md`) that references the config by id.
 Shapes and field docs below are generated from ztype's `tool-schemas.json` (the source of truth) — never hand-built. `schemaPath` is a `DiffPathComponents` array (`{key}` for an object step, `{index}` for an array step) and is always read back from a discovery call (see above), never fabricated.
 
 ### `ADD_ZAI_CONFIGS`
-- `items` *(required)*: `array<{customModelIdentifier: object, name: string}>` — AI agents to create. Each is seeded with the default system + user prompt components (empty text bindings, edit them via the data-binding tools at the schema paths from GET_ZAI_CONFIG_DETAIL), an empty input-arg set and a plain-text output config. Adding the first agent also provisions the AI conversation tables/relations/permissions if absent.
+- `items` *(required)*: `array<{customModelIdentifier?: object, name?: string}>` — AI agents to create. Each is seeded with the default system + user prompt components (empty text bindings, edit them via the data-binding tools at the schema paths from GET_ZAI_CONFIG_DETAIL), an empty input-arg set and a plain-text output config. Adding the first agent also provisions the AI conversation tables/relations/permissions if absent.
 
 ### `UPDATE_ZAI_CONFIG`
 - `configId` *(required)*: `string` — The id of the AI agent to update.
-- `customModelIdentifier`: `{id: string, namespace: string}` — Model to use: the full model identifier ({ id, namespace }) as returned by the model-listing interface — pass it verbatim, never hand-build it. The deprecated `model` field is never written; selecting a model goes through this identifier.
+- `customModelIdentifier`: `{id: string, namespace?: string}` — Model to use: the full model identifier ({ id, namespace }) as returned by the model-listing interface — pass it verbatim, never hand-build it. The deprecated `model` field is never written; selecting a model goes through this identifier.
 - `description`: `string` — New description.
 - `ignoreNullValuesFromContext`: `boolean` — Whether null values from the selected context are ignored.
 - `imageInputQuality`: `enum(LOW|HIGH)` — Image input quality: LOW or HIGH.
@@ -115,14 +115,14 @@ Shapes and field docs below are generated from ztype's `tool-schemas.json` (the 
 
 ### `ADD_ZAI_CONFIG_INPUT_ARGS`
 - `configId` *(required)*: `string`
-- `items` *(required)*: `array<{arrayLevel: integer, displayName: string, type: string}>`
+- `items` *(required)*: `array<{arrayLevel?: integer, displayName: string, type?: string}>`
 
 ### `UPDATE_ZAI_CONFIG_OUTPUT`
 - `configId` *(required)*: `string` — The id of the AI agent whose output config to update.
 - `isStreaming`: `boolean` — Whether the plain-text output streams. Only meaningful when not structured.
 - `isStructured`: `boolean` — Whether the agent emits a structured (typed) output (true) or plain text (false). Switching to structured seeds `outputType` to string when none is given; switching to plain text drops the output type.
 - `maxTokenSize`: `integer` — Max output token size.
-- `outputDescriptionConfig`: `{description: string, fieldDescriptionByType: object}` — Field-description config for the output: a `description` plus `fieldDescriptionByType` (per-type field descriptions). Replaces the whole description config when provided.
+- `outputDescriptionConfig`: `{description?: string, fieldDescriptionByType?: object}` — Field-description config for the output: a `description` plus `fieldDescriptionByType` (per-type field descriptions). Replaces the whole description config when provided.
 - `outputType`: `string` — The structured output's type (refactored type system). Copy a `typeIdentifier` returned by GET_ZAI_CONFIG_SELECTABLE_TYPES verbatim — never hand-build the string. Only meaningful when the output is structured.
 
 Then ship:

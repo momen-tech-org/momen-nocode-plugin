@@ -122,45 +122,45 @@ an empty one of the column's type; fill it afterwards with a `CREATE_*_BINDING` 
 Shapes and field docs below are generated from ztype's `tool-schemas.json` (the source of truth) — never hand-built. `schemaPath` is a `DiffPathComponents` array (`{key}` for an object step, `{index}` for an array step) and is always read back from a discovery call (see above), never fabricated.
 
 ### `GET_DATA_BINDING_OPTIONS`
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>`
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>`
 
 ### `CREATE_OPTION_BINDING`
 - `operation`: `enum(REPLACE|CONCAT)` — Specifies how to apply the data: 'REPLACE' overwrites the current value, 'CONCAT' appends to it. Default is 'REPLACE'.
 - `pathInHierarchicalMenu` *(required)*: `array<string>` — The full hierarchical path to the specific data option (VALUE) to be bound. This path corresponds to the '[Data Binding Options Tree]' in the context.
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>` — The specific schema path in the project where the data binding is occurring.
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>` — The specific schema path in the project where the data binding is occurring.
 
 ### `CREATE_CONST_BINDING`
 - `constantValue` *(required)*: `boolean | string | number` — The constant value to set (e.g. 'Create Post', 0, true).
 - `operation`: `enum(REPLACE|CONCAT)` — Specifies how to apply the data: 'REPLACE' overwrites the current value, 'CONCAT' appends to it. Default is 'REPLACE'.
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>` — The specific schema path in the project where the data binding is occurring.
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>` — The specific schema path in the project where the data binding is occurring.
 
 ### `CREATE_FORMULA_BINDING`
-- `config`: `object · kind: enum(GEO_DISTANCE|GEO_POINT_GET_VALUE|DECIMAL|NUMBER_FORMATTING|DURATION_FORMATTING|DURATION|TIME_GET_PART|TIME_OPERATION|GET_CURRENT_TIME|DATE_TIME_FORMATTING|RELATIVE_TIME) · per-kind: {language: enum(EN|ZH)} | {clearTrailingZeros: boolean, roundingMode: enum(HALF_EVEN|HALF_UP|HALF_DOWN|UP|DOWN|CEILING|FLOOR)} | {dateTimeUnit: enum(YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MILLISECOND|WEEKDAY|WEEK)} | {timeUnit: enum(DAY|HOUR|MINUTE|SECOND|MILLISECONDS)} | {unit: enum(METER|KILOMETER|MILE)} | {getValueType: enum(LATITUDE|LONGITUDE)} | {timeType: enum(DATE|TIME|TIMESTAMP)} | {decimalPlaces: integer, format: enum(THOUSANDS_SEPARATOR|PERCENT)} | {hideSuffix: boolean, language: enum(EN|ZH)} | {direction: enum(LATER|BEFORE)}` — Optional non-databinding scalar config for the created formula (e.g. distance unit, rounding mode, time unit). The config kind must match the chosen operator, otherwise the call fails. Use GET_FORMULA_CONFIG_OPTIONS on an existing formula to discover the exact shape and the allowed values.
+- `config`: `object · kind: enum(GEO_DISTANCE|GEO_POINT_GET_VALUE|DECIMAL|NUMBER_FORMATTING|DURATION_FORMATTING|DURATION|TIME_GET_PART|TIME_OPERATION|GET_CURRENT_TIME|DATE_TIME_FORMATTING|RELATIVE_TIME) · per-kind: {language: enum(EN|ZH)} | {clearTrailingZeros: boolean, roundingMode: enum(HALF_EVEN|HALF_UP|HALF_DOWN|UP|DOWN|CEILING|FLOOR)} | {dateTimeUnit: enum(YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MILLISECOND|WEEKDAY|WEEK)} | {timeUnit: enum(DAY|HOUR|MINUTE|SECOND|MILLISECONDS)} | {unit: enum(METER|KILOMETER|MILE)} | {getValueType: enum(LATITUDE|LONGITUDE)} | {timeType: enum(DATE|TIME|TIMESTAMP)} | {decimalPlaces?: integer, format: enum(THOUSANDS_SEPARATOR|PERCENT)} | {hideSuffix?: boolean, language: enum(EN|ZH)} | {direction: enum(LATER|BEFORE)}` — Optional non-databinding scalar config for the created formula (e.g. distance unit, rounding mode, time unit). The config kind must match the chosen operator, otherwise the call fails. Use GET_FORMULA_CONFIG_OPTIONS on an existing formula to discover the exact shape and the allowed values.
 - `operation`: `enum(REPLACE|CONCAT)`
 - `operator`: `enum(TO_STRING|TO_INTEGER|TO_DECIMAL|TO_DATE_TIME|ADD|SUBTRACT|MULTIPLY|DIVIDE|MODULO|MIN|… 80 total)`
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>`
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>`
 
 ### `CREATE_CONDITIONAL_BINDING`
 - `initialBranchNames`: `array<string>`
 - `operation`: `enum(REPLACE|CONCAT)`
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>`
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>`
 
 ### `GET_REQUEST_FILTER_CONTEXT`
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>`
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>`
 
 ### `ADD_REQUEST_FILTER_CONDITION`
-- `columnPathComponents` *(required)*: `array<{componentMRef: string, displayName: string, isArrayElementMapping: boolean, isArrayType: boolean, itemType: string, name: string, tpaResultSource: enum(SUCCESS|PERMANENT_FAIL|TEMPORARY_FAIL), type: string}>` — The column to filter on, as a `pathComponents` list copied verbatim from a GET_REQUEST_FILTER_CONTEXT `selectableColumns` entry — never hand-built.
+- `columnPathComponents` *(required)*: `array<{componentMRef?: string, displayName?: string, isArrayElementMapping?: boolean, isArrayType: boolean, itemType?: string, name: string, tpaResultSource?: enum(SUCCESS|PERMANENT_FAIL|TEMPORARY_FAIL), type?: string}>` — The column to filter on, as a `pathComponents` list copied verbatim from a GET_REQUEST_FILTER_CONTEXT `selectableColumns` entry — never hand-built.
 - `operator`: `string` — Comparison operator (e.g. `_eq`, `_neq`, `_gt`, `_lt`, `_gte`, `_lte`, `_is_null`, `_is_not_null`, `_in`, `_nin`, `_like`, `_ilike`). Defaults to `_eq`. Pick one from the column's `allowedOperators` in GET_REQUEST_FILTER_CONTEXT.
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>` — Schema path of the target conditional filter's `where` (the `whereSchemaPath` from GET_REQUEST_FILTER_CONTEXT), or a nested AND/OR sub-expression within it to append into.
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>` — Schema path of the target conditional filter's `where` (the `whereSchemaPath` from GET_REQUEST_FILTER_CONTEXT), or a nested AND/OR sub-expression within it to append into.
 - `value`: `object` — Optional comparison value binding; an empty value of the column's type is seeded when omitted, to be filled afterwards with a CREATE_*_BINDING tool on this condition's `value`.
 
 ### `UPDATE_REQUEST_FILTER_CONDITION_OPERATOR`
 - `operator` *(required)*: `string` — New comparison operator (see ADD_REQUEST_FILTER_CONDITION for the allowed values).
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>` — Schema path of the column condition whose operator should change.
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>` — Schema path of the column condition whose operator should change.
 
 ### `ADD_REQUEST_SORT_CONFIG`
-- `field` *(required)*: `array<{componentMRef: string, displayName: string, isArrayElementMapping: boolean, isArrayType: boolean, itemType: string, name: string, tpaResultSource: enum(SUCCESS|PERMANENT_FAIL|TEMPORARY_FAIL), type: string}>` — The column to sort by, as a `pathComponents` list copied from a GET_REQUEST_FILTER_CONTEXT `selectableColumns` entry.
-- `schemaPath` *(required)*: `array<{index: integer, key: string}>` — Schema path of the target conditional filter's `filter` (the `sortConfigsSchemaPath` from GET_REQUEST_FILTER_CONTEXT).
+- `field` *(required)*: `array<{componentMRef?: string, displayName?: string, isArrayElementMapping?: boolean, isArrayType: boolean, itemType?: string, name: string, tpaResultSource?: enum(SUCCESS|PERMANENT_FAIL|TEMPORARY_FAIL), type?: string}>` — The column to sort by, as a `pathComponents` list copied from a GET_REQUEST_FILTER_CONTEXT `selectableColumns` entry.
+- `schemaPath` *(required)*: `array<{index?: integer, key?: string}>` — Schema path of the target conditional filter's `filter` (the `sortConfigsSchemaPath` from GET_REQUEST_FILTER_CONTEXT).
 - `sort`: `enum(DESCENDING|ASCENDING)` — Sort direction; defaults to ascending.
 
 Then ship:
