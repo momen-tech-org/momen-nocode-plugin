@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "momen": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "momen-mcp@2.0.15",
+        "mcp"
+      ]
+    }
+  }
+}

@@ -63,7 +63,7 @@ Each call is applied immediately — any resulting CRDT patch is uploaded. Batch
 | List pages | `GET_ALL_PAGE_NAMES` | — |
 | Component info | `GET_COMPONENT_INFO` | `componentId` |
 
-Component editing (create / update / delete) is not available through the CLI — make those changes in the editor. Here you can inspect the component tree; bind component properties to data with `data-binding.md`.
+Building or changing UI is the user's job, done in the editor — not yours. Component create / update / delete is intentionally unavailable through the CLI, so for anything visual (pages, components, layout, styling) **only instruct the user**: give concrete, numbered editor steps for them to perform, and never attempt to build UI on their behalf. Through the CLI you can only *inspect* the component tree (above) and bind already-placed component properties to data with `data-binding.md`.
 
 Then ship:
 
