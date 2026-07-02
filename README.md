@@ -58,7 +58,7 @@ directly. Add it to your tool's MCP config:
   "mcpServers": {
     "momen": {
       "command": "npx",
-      "args": ["-y", "momen-mcp", "mcp"]
+      "args": ["-y", "momen-mcp@latest", "mcp"]
     }
   }
 }
