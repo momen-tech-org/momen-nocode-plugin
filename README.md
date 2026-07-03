@@ -73,7 +73,7 @@ The plugin runs `momen-mcp` through `npx`, so **Node.js 18+** is required. On fi
 asked to authenticate; you can also do it ahead of time:
 
 ```bash
-npx -y momen-mcp login
+npx -y momen-mcp@latest login
 ```
 
 Then ask your assistant to work on your Momen app — it loads the `momen-platform` skill and takes
