@@ -1,7 +1,7 @@
 {
   "name": "momen-nocode",
   "description": "Orientation and entry point for working on a Momen project. Load first for any Momen app task — designing or changing the data model, UI, server-side action flows, permissions, payments, or data bindings, or reading runtime logs — then follow it to the right capability. For Momen projects only; not generic programming help.",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "author": {
     "name": "Momen"
   }
