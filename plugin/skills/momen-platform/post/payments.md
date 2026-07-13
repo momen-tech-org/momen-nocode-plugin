@@ -12,10 +12,11 @@ Momen's payment system is built around a developer-owned **order table** plus a 
 
 ### The Order Table (you design this — follow database conventions)
 The order table is a normal business table you create; the payment engine references one of its rows by its primary-key id (the `orderId` everywhere below). At minimum it needs:
-- an **amount/price** column — type `DECIMAL`, the authoritative price computed server-side.
-- a **status** column — model it as a `TEXT` column holding the lifecycle value (e.g.
-  `pending`, `paid`, `cancelled`, `refunded`); your fulfillment flow updates it. Enums are
-  not available without the refactored type system, so use TEXT here.
+- an **amount/price** column — type `s:p:decimal`, the authoritative price computed server-side.
+- a **status** column — create a custom enum whose options mirror the payment lifecycle
+  (e.g. `pending`, `paid`, `cancelled`, `refunded`), then use the exact
+  `u:e:<enumId>` returned by the type plugin as the column type; your fulfillment flow
+  updates it.
 - a **buyer link** — do NOT add a raw `user_id`/`account_id` column. Create a 1:n RELATION from `account` to the order table so the buyer FK is generated automatically (the same manual-foreign-key rule the database plugin enforces). Add product/quantity links as relations too. Naming follows the usual rules: `snake_case` system names, no manual `id`/`created_at` columns (the runner mints the PK).
 
 **Irreversibility warning:** once the order table is linked to the payment module it CANNOT be unlinked, replaced, or deleted. Always confirm the table design with the user and warn them of this before they bind it. Choose the table deliberately.
@@ -37,7 +38,7 @@ Enabling Stripe payments auto-generates four backend Actionflows. You don't crea
 The flow receives, as inputs:
 - `orderId` — the order-table row to look up and update.
 - `paymentStatus` — `SUCCESSFUL` or `FAILED`.
-- `alreadyProcessed` — boolean; true when this webhook has already been handled. **Idempotency contract (critical):** Stripe can deliver the same webhook more than once. Only perform fulfillment / mark the order paid or failed when `paymentStatus` is the expected value AND `alreadyProcessed == false`. Guard the fulfillment branch with a Condition node on `alreadyProcessed`, otherwise duplicate webhooks double-fulfill (double-ship, double-credit). Typical body: branch on `paymentStatus`; on SUCCESSFUL + not-already-processed → update the order row's status to your "paid" enum value and run fulfillment (grant a role, decrement stock, etc.); on FAILED → mark the order failed/cancelled.
+- `alreadyProcessed` — boolean; true when this webhook has already been handled. **Idempotency contract (critical):** Stripe can deliver the same webhook more than once. Only perform fulfillment / mark the order paid or failed when `paymentStatus` is the expected value AND `alreadyProcessed == false`. Guard the fulfillment branch with a Condition node on `alreadyProcessed`, otherwise duplicate webhooks double-fulfill (double-ship, double-credit). Typical body: branch on `paymentStatus`; on SUCCESSFUL + not-already-processed → update the order row's status to your "paid" status value and run fulfillment (grant a role, decrement stock, etc.); on FAILED → mark the order failed/cancelled.
 
 ### Creating an Order (the secure-transaction pattern)
 Never let the client decide the price. Order creation must run server-side:
@@ -46,7 +47,7 @@ Never let the client decide the price. Order creation must run server-side:
 3. The frontend maps the *returned* `orderId` and amount into the Stripe payment action. This is the Zero-Trust pattern: the price the customer is charged is the one the server computed and stored on the order, not anything the browser sent.
 
 ### Amounts & Currency
-Stripe charges in the **smallest currency unit**. For two-decimal currencies (USD, EUR, GBP, CNY, ...) that means cents — $10.00 → `1000`. For zero-decimal currencies (JPY, KRW, CLP, BIF, ...) the amount is the whole-unit value with no ×100. Compute the smallest-unit amount on the server from the order's `DECIMAL` price; mismatching the unit silently over/under-charges.
+Stripe charges in the **smallest currency unit**. For two-decimal currencies (USD, EUR, GBP, CNY, ...) that means cents — $10.00 → `1000`. For zero-decimal currencies (JPY, KRW, CLP, BIF, ...) the amount is the whole-unit value with no ×100. Compute the smallest-unit amount on the server from the order's `s:p:decimal` price; mismatching the unit silently over/under-charges.
 
 ### Webhook Rules
 - The system auto-generates ONE webhook for successful payments. Do NOT modify it, and do NOT add extra Stripe events to it in the Stripe dashboard — that misfires the payment-success logic.
