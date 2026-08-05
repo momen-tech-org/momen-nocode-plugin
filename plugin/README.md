@@ -9,11 +9,10 @@ tree. The same bundle ships three
 host manifests — `.claude-plugin/plugin.json` (Claude Code), `.codex-plugin/plugin.json` (Codex),
 and `.cursor-plugin/plugin.json` (Cursor) — over one shared `skills/`, `hooks/`, and `bin/`.
 Cursor also consumes the `momen` MCP server declared in `mcp.json`; Claude Code and Codex ignore
-it and invoke the CLI via the bin launcher. Its CLI recipes invoke the launcher by absolute
-path (`${PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT}}/bin/momen-mcp`, which resolves under both hosts)
-rather than as a bare command, so a globally-installed `momen-mcp` (or `momen`) on PATH can't
-shadow it. The launcher always runs the pinned published CLI via `npx -y momen-mcp@<version>`, so
-the plugin behaves identically whether installed from a marketplace or run locally.
+it. Its CLI recipes invoke the pinned published CLI directly via `npx -y momen-mcp@<version>`, which
+runs this plugin's exact build so a globally-installed `momen-mcp` (or `momen`) on PATH can't
+shadow it — with no dependency on the host exposing `PLUGIN_ROOT`/`CLAUDE_PLUGIN_ROOT`. The bundled
+`bin/momen-mcp` launcher runs the same `npx -y momen-mcp@<version>` and stays available for local shell use.
 
 ## Local use
 

@@ -48,6 +48,27 @@ ln -s "$PWD/plugin" ~/.cursor/plugins/local/momen-nocode
 A public Cursor Marketplace listing is submitted at cursor.com/marketplace/publish (open source,
 manually reviewed).
 
+### opencode
+
+opencode has no plugin marketplace; it reads the `momen` MCP server from an
+`opencode.json` (its `mcp` shape differs from `mcp.json`). This repo ships one at its root — copy it
+into your project, or merge its `mcp` block into your existing config:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "momen": {
+      "type": "local",
+      "command": ["npx", "-y", "momen-mcp@latest", "mcp"],
+      "enabled": true
+    }
+  }
+}
+```
+
+You get Momen's tools; the guided `momen-platform` skill is plugin-only (Claude Code, Codex, Cursor).
+
 ### Other MCP-compatible tools (Windsurf, Cline, Claude Desktop, Qoder, Trae, …)
 
 These don't read the plugin marketplace, but they can use the underlying `momen-mcp` MCP server

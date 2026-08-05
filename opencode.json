@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "momen": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "momen-mcp@2.3.0",
+        "mcp"
+      ],
+      "enabled": true
+    }
+  }
+}
