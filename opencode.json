@@ -6,7 +6,7 @@
       "command": [
         "npx",
         "-y",
-        "momen-mcp@2.6.2",
+        "momen-mcp@2.7.0",
         "mcp"
       ],
       "enabled": true
