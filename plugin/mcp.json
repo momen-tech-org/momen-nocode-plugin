@@ -4,7 +4,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "momen-mcp@2.7.3",
+        "momen-mcp@2.7.4",
         "mcp"
       ]
     }
