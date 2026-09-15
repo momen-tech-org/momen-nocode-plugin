@@ -9,9 +9,9 @@ description: >-
 Before reading platform guidance, identify the active project and pin it when needed:
 
 ```bash
-npx -y momen-mcp@2.7.6 projects search --projectName "My App"
-npx -y momen-mcp@2.7.6 project set-current --projectExId <exId>
-npx -y momen-mcp@2.7.6 schema load
+npx -y momen-mcp@2.7.7 projects search --projectName "My App"
+npx -y momen-mcp@2.7.7 project set-current --projectExId <exId>
+npx -y momen-mcp@2.7.7 schema load
 ```
 
 Read the `typeSystem` field returned by `schema load` exactly, then route without asking the user:
@@ -23,4 +23,4 @@ If schema loading fails, `typeSystem` is missing, or its value is unknown, stop 
 
 Repeat this detection whenever the active project changes.
 
-> **Always invoke the CLI exactly as written above** — via `npx -y momen-mcp@2.7.6` — never bare `momen-mcp`, even though `--help` prints its own name that way. The `@2.7.6` version pin runs this plugin's exact published build, so a globally-installed `momen-mcp` (or `momen`) on `PATH` can't shadow it.
+> **Always invoke the CLI exactly as written above** — via `npx -y momen-mcp@2.7.7` — never bare `momen-mcp`, even though `--help` prints its own name that way. The `@2.7.7` version pin runs this plugin's exact published build, so a globally-installed `momen-mcp` (or `momen`) on `PATH` can't shadow it.
