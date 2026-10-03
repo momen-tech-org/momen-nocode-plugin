@@ -10,38 +10,48 @@ Format: - {relative_path}: {page_title}
   - /: /
 * /changelog
   - /changelog: Product Changelog
+  - /changelog/year-2023: 2023 Changelog
+  - /changelog/year-2024: 2024 Changelog
+  - /changelog/year-2025: 2025 Changelog
+  - /changelog/year-2026: 2026 Changelog
 * /docs
-  - /docs: Introduction & Pathways
+  - /docs: Introduction
   - /docs/actions: Action
   - /docs/actions/concept/interaction_model: Interaction Model
-  - /docs/actions/guide/ai_integration: Configure AI Agents
+  - /docs/actions/guide/ai_integration: Build AI Agents
   - /docs/actions/guide/api_integration: Integrate APIs
   - /docs/actions/guide/building_action_flows: Build Actionflows
   - /docs/actions/guide/frontend_interactions: Build Frontend Interactions
   - /docs/actions/guide/payment/payment_airwallex: Airwallex Payment
   - /docs/actions/guide/payment/payment_overview: Payment Overview
   - /docs/actions/guide/payment/payment_stripe: Stripe Payment
-  - /docs/actions/guide/sso_configuration: Configure Single Sign-On
+  - /docs/actions/guide/sso_configuration: Use third-party sign-in
+  - /docs/actions/reference: Reference
   - /docs/actions/reference/actionflow_node_list: Actionflow Node List
-  - /docs/actions/reference/app_page: App and Page Actions
-  - /docs/actions/reference/communication: Communication Actions
+  - /docs/actions/reference/app_page: Client and Page Actions
   - /docs/actions/reference/component_operations: Component Actions
   - /docs/actions/reference/condition: Conditional
   - /docs/actions/reference/database_operation: Database Operations
-  - /docs/actions/reference/file: File Operations
-  - /docs/actions/reference/for_each: For Each
-  - /docs/actions/reference/location: Location
-  - /docs/actions/reference/navigation: Navigation
-  - /docs/actions/reference/qr_code: QR Code
-  - /docs/actions/reference/set_clipboard: Clipboard
-  - /docs/actions/reference/share: Share
+  - /docs/actions/reference/for_each: Loop
+  - /docs/actions/reference/navigation: Navigation Actions
   - /docs/actions/reference/show_toast: Toast and Modal
+  - /docs/actions/reference/system: System
   - /docs/actions/reference/trigger_list: Triggers
   - /docs/actions/reference/user_event_collection: User Actions
-  - /docs/billing_commercial: Billing & Commercial
-  - /docs/billing_commercial/commission_rule: Promoter Program
-  - /docs/billing_commercial/my_wallet: My Wallet
-  - /docs/billing_commercial/upgrade_plan: Project & Server Upgrade
+  - /docs/billing: Billing
+  - /docs/billing/commission_rule: Promoter Program
+  - /docs/billing/my_wallet: My Wallet
+  - /docs/billing/resource_management: Manage Project Resources
+  - /docs/billing/upgrade_plan: Upgrade a Project
+  - /docs/build_with_ai: Build with AI
+  - /docs/build_with_ai/ai_copilot: Build with AI Copilot
+  - /docs/build_with_ai/reading_what_ai_built: Read what AI built
+  - /docs/build_with_ai/taking_over: Take over at any point
+  - /docs/code: Extend with Code
+  - /docs/code/code_component: Build Code Components
+  - /docs/code/headless: Headless · Momen BaaS
+  - /docs/code/run_code: Develop with Run Code
+  - /docs/code/runtime_api: Runtime API Reference
   - /docs/data: Data
   - /docs/data/concept/data_flow: How Data Flows
   - /docs/data/concept/relational_data_modeling: Relational Data Modeling
@@ -54,15 +64,16 @@ Format: - {relative_path}: {page_title}
   - /docs/data/guide/import_and_export: Import and Export Data
   - /docs/data/guide/resource_manager: Manage Uploaded Assets
   - /docs/data/guide/secret_management: Manage Secrets
+  - /docs/data/guide/variable_parameter_usage: Use Page Variables and Parameters
   - /docs/data/guide/vector_data: Set Up Vector Search
   - /docs/data/reference/data_types: Data Types
-  - /docs/data/reference/formula_dictionary: Formulas and Functions
+  - /docs/data/reference/empty_values: Empty Values
+  - /docs/data/reference/formula_dictionary: Formula Reference
   - /docs/design: Build UI
   - /docs/design/concept/layout_concepts: Layout System
   - /docs/design/concept/ui_organization_model: UI Organization
-  - /docs/design/guide/component_system_migration: Component System Migration
-  - /docs/design/guide/studio_basics: Page & Component Basics
-  - /docs/design/guide/using_custom_components: Using Custom Components
+  - /docs/design/guide/studio_basics: Build Your First Page
+  - /docs/design/guide/using_custom_components: Use Custom Components
   - /docs/design/reference/breakpoints: Breakpoints
   - /docs/design/reference/design_panel: Design Panel
   - /docs/design/reference/display_components: Display Components
@@ -71,30 +82,26 @@ Format: - {relative_path}: {page_title}
   - /docs/design/reference/other_components: Other Components
   - /docs/design/reference/page_modal: Pages & Modals
   - /docs/design/reference/ui_shortcuts: UI Shortcuts
-  - /docs/developers: Developers
-  - /docs/developers/api_documentation: Momen Runtime API Reference
-  - /docs/developers/code_block_node_dev: Custom Code
-  - /docs/developers/code_component: Code Component Development
-  - /docs/developers/code_component/api: Code Component API Reference
-  - /docs/developers/code_component/cli_changelog: CLI Tool Changelog
-  - /docs/developers/headless: Headless · Momen BaaS
-  - /docs/publish_operate: Publish & Operate
-  - /docs/publish_operate/app_deployment: App Deployment
-  - /docs/publish_operate/domain_seo_integration: Domain, SEO & Integration
-  - /docs/publish_operate/log_service: Log Service
-  - /docs/publish_operate/mirror: Mirror (Real-time Preview)
-  - /docs/publish_operate/multiple_frontends: Multiple Frontends
-  - /docs/publish_operate/permissions: Permissions
-  - /docs/publish_operate/project_team_collaboration: Project & Team Collaboration
-  - /docs/publish_operate/reference/error_dictionary: Error Dictionary
-  - /docs/publish_operate/reference/rendering_modes: Rendering Modes
-  - /docs/publish_operate/reference/seo_reference: SEO Reference
-  - /docs/publish_operate/troubleshooting_guide: Troubleshooting Guide
-  - /docs/starts/editor_overview: Editor Overview
-  - /docs/starts/glossary: The Glossary
-  - /docs/starts/hello_world: 5-Minute Tutorial: To-Do List
-  - /docs/starts/mental_models: Mental Models
-  - /docs/starts/methodology: Methodology
+  - /docs/production: Publish & Operate
+  - /docs/production/app_deployment: Publish an App
+  - /docs/production/custom_domain: Use a Custom Domain
+  - /docs/production/log_service: View Runtime Logs
+  - /docs/production/mirror: Mirror (Real-Time Preview)
+  - /docs/production/multiple_frontends: Build a Multi-Client App
+  - /docs/production/permissions: Manage Permissions
+  - /docs/production/reference/error_dictionary: Error Reference
+  - /docs/production/reference/rendering_modes: Rendering Modes
+  - /docs/production/seo: SEO for Web Apps
+  - /docs/production/troubleshooting_guide: Troubleshoot an App
+  - /docs/projects: Projects
+  - /docs/projects/collaboration: Project Collaboration
+  - /docs/projects/lifecycle: Project Management
+  - /docs/start/bring_your_own_agent: Bring your own AI coding tool
+  - /docs/start/editor_overview: Editor Overview
+  - /docs/start/glossary: The Glossary
+  - /docs/start/hello_world: 5-Minute Tutorial: To-Do List
+  - /docs/start/mental_models: Mental Models
+  - /docs/start/methodology: Methodology
 * /templates
   - /templates: Template Center
   - /templates/content/blog_template_tutorial: Blog Template Guide
@@ -120,14 +127,24 @@ Format: - {relative_path}: {page_title}
   - /tutorial/ai_applications/ai_resume_parser: How to Build an AI Resume Parser?
   - /tutorial/ai_applications/ai_smart_tagger: How to Build an AI Smart Tagger?
   - /tutorial/ai_applications/ai_spam_detector: How to Build an AI Spam Detector?
+  - /tutorial/ai_applications/ai_summarizer_and_translator: How to Build an AI Summarizer & Translator
   - /tutorial/automations/auto_downgrade_membership: Automatic Membership Downgrade
   - /tutorial/automations/order_status_auto_updater: Order Status Auto Updater
   - /tutorial/feature_modules/cms_mvp: CMS (MVP Version)
+  - /tutorial/feature_modules/daily_claim_limits: Daily Claim Limits (Two Approaches)
+  - /tutorial/feature_modules/daily_claim_limits/state_counter: Daily Claim Limit (State Counter)
+  - /tutorial/feature_modules/daily_claim_limits/unique_constraint: Daily Claim Limit (Unique Constraint)
+  - /tutorial/feature_modules/form_drafts: Form Drafts (Two Approaches)
+  - /tutorial/feature_modules/form_drafts/manual_save: Manual Draft Saving for Forms
+  - /tutorial/feature_modules/form_drafts/realtime_save: Real-time Draft Saving for Forms
   - /tutorial/feature_modules/implement_referral_code_generation_and_attribution: Referral Code System
+  - /tutorial/feature_modules/inventory_deduction: How to Build an Oversell-Proof Inventory Deduction System
   - /tutorial/feature_modules/login_register: Login Page Design
   - /tutorial/feature_modules/native_mobile_conversion: Momen App to Native Mobile Conversion
   - /tutorial/feature_modules/nested_list_seat_booking: How to Build a Nested List Seat Booking?
-  - /tutorial/feature_modules/web_verification_code_countdown: Verification Code Countdown Timer
+  - /tutorial/feature_modules/password_strength_validation: How to Implement Password Strength Validation
+  - /tutorial/feature_modules/role_based_content_gating: How to Gate Content by User Role
+  - /tutorial/feature_modules/web_verification_code_countdown: Verification code Countdown Timer
 
 ### Guidelines
 1. When the user asks "how-to" questions, or requests guides, call docs.search first.
@@ -140,8 +157,8 @@ Format: - {relative_path}: {page_title}
 Read-only — no schema session needed.
 
 ```bash
-npx -y momen-mcp@2.7.8 docs search --query "how to configure stripe payments"
-npx -y momen-mcp@2.7.8 docs get-page --path "/03_data/01_database_basics"
+npx -y momen-mcp@2.7.11 docs search --query "how to configure stripe payments"
+npx -y momen-mcp@2.7.11 docs get-page --path "/03_data/01_database_basics"
 ```
 
 `docs search` returns `{ path, title, url }` ranked by relevance; `url` is a public HTTPS link you can cite. Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.
