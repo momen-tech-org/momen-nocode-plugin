@@ -24,11 +24,14 @@ Format: - {relative_path}: {page_title}
   - /docs/actions/guide/frontend_interactions: Build Frontend Interactions
   - /docs/actions/guide/payment/payment_airwallex: Airwallex Payment
   - /docs/actions/guide/payment/payment_overview: Payment Overview
+  - /docs/actions/guide/payment/payment_reference: Payment Reference
   - /docs/actions/guide/payment/payment_stripe: Stripe Payment
   - /docs/actions/guide/sso_configuration: Use third-party sign-in
+  - /docs/actions/guide/verification_code: Send and check verification codes
   - /docs/actions/reference: Reference
   - /docs/actions/reference/actionflow_node_list: Actionflow Node List
   - /docs/actions/reference/app_page: Client and Page Actions
+  - /docs/actions/reference/communication: Communication Actions
   - /docs/actions/reference/component_operations: Component Actions
   - /docs/actions/reference/condition: Conditional
   - /docs/actions/reference/database_operation: Database Operations
@@ -45,6 +48,7 @@ Format: - {relative_path}: {page_title}
   - /docs/billing/upgrade_plan: Upgrade a Project
   - /docs/build_with_ai: Build with AI
   - /docs/build_with_ai/ai_copilot: Build with AI Copilot
+  - /docs/build_with_ai/bring_your_own_agent: Bring your own AI coding tool
   - /docs/build_with_ai/reading_what_ai_built: Read what AI built
   - /docs/build_with_ai/taking_over: Take over at any point
   - /docs/code: Extend with Code
@@ -84,6 +88,8 @@ Format: - {relative_path}: {page_title}
   - /docs/design/reference/ui_shortcuts: UI Shortcuts
   - /docs/production: Publish & Operate
   - /docs/production/app_deployment: Publish an App
+  - /docs/production/app_deployment/mobile_app: Publish a Mobile App
+  - /docs/production/app_deployment/web_app: Publish a Web App
   - /docs/production/custom_domain: Use a Custom Domain
   - /docs/production/log_service: View Runtime Logs
   - /docs/production/mirror: Mirror (Real-Time Preview)
@@ -91,12 +97,11 @@ Format: - {relative_path}: {page_title}
   - /docs/production/permissions: Manage Permissions
   - /docs/production/reference/error_dictionary: Error Reference
   - /docs/production/reference/rendering_modes: Rendering Modes
-  - /docs/production/seo: SEO for Web Apps
+  - /docs/production/seo: SEO for web apps
   - /docs/production/troubleshooting_guide: Troubleshoot an App
   - /docs/projects: Projects
   - /docs/projects/collaboration: Project Collaboration
   - /docs/projects/lifecycle: Project Management
-  - /docs/start/bring_your_own_agent: Bring your own AI coding tool
   - /docs/start/editor_overview: Editor Overview
   - /docs/start/glossary: The Glossary
   - /docs/start/hello_world: 5-Minute Tutorial: To-Do List
@@ -157,8 +162,8 @@ Format: - {relative_path}: {page_title}
 Read-only — no schema session needed.
 
 ```bash
-npx -y momen-mcp@2.7.13 docs search --query "how to configure stripe payments"
-npx -y momen-mcp@2.7.13 docs get-page --path "/03_data/01_database_basics"
+npx -y momen-mcp@2.7.14 docs search --query "how to configure stripe payments"
+npx -y momen-mcp@2.7.14 docs get-page --path "/03_data/01_database_basics"
 ```
 
 `docs search` returns `{ path, title, url }` ranked by relevance; `url` is a public HTTPS link you can cite. Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.

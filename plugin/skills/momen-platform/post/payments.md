@@ -1,13 +1,13 @@
 # Payments (Stripe)
 
 ## Payment System Domain Knowledge
-Momen's payment system is built around a developer-owned **order table** plus a set of platform-managed payment records and **auto-generated Actionflows** that react to gateway webhooks. On Momen the gateway is Stripe (one-time + subscriptions). Enabling and configuring payments splits in two: you activate the module with ACTIVATE_PAYMENT; the Stripe keys, the brand assets and the Pro-plan upgrade are the user's own, in the editor (Action → Payment).
+Momen's payment system is built around a developer-owned **order table** plus a set of platform-managed payment records and **auto-generated Actionflows** that react to gateway webhooks. On Momen the gateway is Stripe (one-time + subscriptions), plus Airwallex where it is enabled for the project. Enabling and configuring payments splits in two: you activate the module with ACTIVATE_PAYMENT; the gateway credentials, the brand assets and the Pro-plan upgrade are the user's own, in the editor (Action → Payment).
 
 ### Prerequisites (in order)
 1. The user upgrades the project to the Pro plan or higher (payments are gated by plan).
 2. Create the **order table** (see below) with its required fields.
 3. Call ACTIVATE_PAYMENT with the order table's display name. Read `overview.project` first — it reports whether payments are already enabled and which types are active, and the order table is fixed by the first activation and ignored afterwards. The call appends the type's generated flows/callbacks/jobs and grants the logged-in user role permission to pay with it; a first activation also inserts the payment tables, which every role then carries in its table permissions though only the logged-in user role can read them. It names what it created; say so in your answer, since in AUTO_ACCEPT the user was not asked.
-4. Configure the Stripe keys (publishable + secret), brand name, logo, slogan.
+4. Configure the gateway credentials — the Stripe keys (publishable + secret) and/or the Airwallex client ID, API key and webhook secret — plus brand name, logo, slogan.
 5. Confirm the auto-generated webhook(s) are wired (see "Webhook rules").
 
 ### The Order Table (you design this — follow database conventions)
@@ -44,36 +44,42 @@ The flow receives, as inputs:
 Never let the client decide the price. Order creation must run server-side:
 1. Frontend triggers a backend Actionflow passing only identifiers (e.g. `product_id`, quantity) — never the price.
 2. The flow queries the product/price server-side, computes the authoritative amount, inserts a new order row with status `pending`, and returns the generated `orderId` and verified amount.
-3. The frontend maps the *returned* `orderId` and amount into the Stripe payment action. This is the Zero-Trust pattern: the price the customer is charged is the one the server computed and stored on the order, not anything the browser sent.
+3. The frontend maps the *returned* `orderId` and amount into the Stripe or Airwallex payment action. This is the Zero-Trust pattern: the price the customer is charged is the one the server computed and stored on the order, not anything the browser sent.
 
 ### Amounts & Currency
 Stripe charges in the **smallest currency unit**. For two-decimal currencies (USD, EUR, GBP, CNY, ...) that means cents — $10.00 → `1000`. For zero-decimal currencies (JPY, KRW, CLP, BIF, ...) the amount is the whole-unit value with no ×100. Compute the smallest-unit amount on the server from the order's `s:p:decimal` price; mismatching the unit silently over/under-charges.
+
+### Airwallex (only where enabled for the project)
+Airwallex is activated like any other type and takes both one-time payments and subscriptions. It generates two backend Actionflows; don't delete or rename them:
+1. **Airwallex Payment** — receives every Airwallex webhook as `fz_payment_callback_input` and branches on the event type: payment status changed (`payment_intent.succeeded` / `payment_intent.cancelled`), refund (`refund.accepted` / `refund.failed`), subscription status changes, and `invoice.finalized`. In the payment branch the built-in "Sync payment status" block outputs `orderId`, `paymentStatus` (`SUCCESSFUL` or `CANCELLED`) and `alreadyProcessed`; in the refund branch "Sync refund status" outputs `orderId`, `status` (`REFUNDED` or `FAILED`) and `alreadyProcessed`. Put fulfillment after those blocks under the same idempotency contract: act only on the expected status AND `alreadyProcessed == false`.
+2. **Airwallex Subscription Renewal** — called by Airwallex Payment with the invoice id to create the order and payment for a subscription renewal.
+Airwallex amounts are decimals in the currency's major unit (10.00, not 1000): pass the order's server-computed decimal price directly.
 
 ### Webhook Rules
 - The system auto-generates ONE webhook for successful payments. Do NOT modify it, and do NOT add extra Stripe events to it in the Stripe dashboard — that misfires the payment-success logic.
 - For other events (failed charges, refunds, subscription changes), create SEPARATE webhook trigger + endpoint pairs in Momen and register them in Stripe.
 
 ### Scope Note
-ACTIVATE_PAYMENT turns the module on one type at a time, and the actionflow plugin edits the generated flows' bodies. What you cannot do is the user's own editor work (Action → Payment): the Stripe keys, the brand assets and the plan upgrade. Design the order table first (via the database plugin), then activate, then wire the secure order-creation flow and add the `alreadyProcessed` idempotency guard in StripePayment.
+ACTIVATE_PAYMENT turns the module on one type at a time, and the actionflow plugin edits the generated flows' bodies. What you cannot do is the user's own editor work (Action → Payment): the gateway credentials, the brand assets and the plan upgrade. Design the order table first (via the database plugin), then activate, then wire the secure order-creation flow and add the `alreadyProcessed` idempotency guard in StripePayment.
 
 ## How to drive it (CLI only)
 
-All commands are `npx -y momen-mcp@2.7.13 <verb>`. A long-lived daemon holds the in-memory CRDT schema session
+All commands are `npx -y momen-mcp@2.7.14 <verb>`. A long-lived daemon holds the in-memory CRDT schema session
 between calls. **Edits do NOT go live until `project sync-backend`.**
 
 ```bash
-npx -y momen-mcp@2.7.13 whoami                                    # check auth; if needed: npx -y momen-mcp@2.7.13 login
+npx -y momen-mcp@2.7.14 whoami                                    # check auth; if needed: npx -y momen-mcp@2.7.14 login
 # create a NEW project (auto-pins it; its pre/post type-system state follows the account rollout):
-npx -y momen-mcp@2.7.13 project create --projectName "My App"
-# …or pin an EXISTING one (find its exId with npx -y momen-mcp@2.7.13 projects search):
-npx -y momen-mcp@2.7.13 project set-current --projectExId <exId>
-npx -y momen-mcp@2.7.13 schema load                               # warm the schema session
+npx -y momen-mcp@2.7.14 project create --projectName "My App"
+# …or pin an EXISTING one (find its exId with npx -y momen-mcp@2.7.14 projects search):
+npx -y momen-mcp@2.7.14 project set-current --projectExId <exId>
+npx -y momen-mcp@2.7.14 schema load                               # warm the schema session
 ```
 
 Operations run through one verb:
 
 ```bash
-npx -y momen-mcp@2.7.13 schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]'
+npx -y momen-mcp@2.7.14 schema tool-call --toolCalls '[{"name":"<TOOL_NAME>","args":{ ... }}]'
 ```
 Each call is applied immediately — any resulting CRDT patch is uploaded. Batch several calls in one array; use `schema undo` to revert the last change.
 A batch is all-or-nothing: when any call in the array fails, the whole batch's changes are discarded even though the other calls returned success — only the failing call's error is reported, so after a batch error re-read (`GET_*`) before assuming anything persisted.
@@ -104,6 +110,6 @@ Activate one payment type on this project. Read overview.project first: it repor
 Then ship:
 
 ```bash
-npx -y momen-mcp@2.7.13 schema validate && npx -y momen-mcp@2.7.13 project sync-backend
+npx -y momen-mcp@2.7.14 schema validate && npx -y momen-mcp@2.7.14 project sync-backend
 ```
 `project sync-backend` aborts with `SAVE_SCHEMA_WITHOUT_PATCHES` when nothing is pending — make at least one change before shipping.
