@@ -181,4 +181,4 @@ Mirror, Preview and Publish are things the USER drives from the editor — you c
 * Email/password
 
 ### Timezone & Locale
-Default timezone: **UTC+00:00**. Default UI language: English (en-US).
+Product default timezone: **UTC**. A project can override it; the zone actually in effect is `timezone` in GET_PROJECT_OVERVIEW. Default UI language: English (en-US).

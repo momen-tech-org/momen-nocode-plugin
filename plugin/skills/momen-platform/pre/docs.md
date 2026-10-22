@@ -77,6 +77,7 @@ Format: - {relative_path}: {page_title}
   - /docs/design/concept/layout_concepts: Layout System
   - /docs/design/concept/ui_organization_model: UI Organization
   - /docs/design/guide/studio_basics: Build Your First Page
+  - /docs/design/guide/theme: Use the Design Theme
   - /docs/design/guide/using_custom_components: Use Custom Components
   - /docs/design/reference/breakpoints: Breakpoints
   - /docs/design/reference/design_panel: Design Panel
@@ -162,8 +163,8 @@ Format: - {relative_path}: {page_title}
 Read-only — no schema session needed.
 
 ```bash
-npx -y momen-mcp@2.7.14 docs search --query "how to configure stripe payments"
-npx -y momen-mcp@2.7.14 docs get-page --path "/03_data/01_database_basics"
+npx -y momen-mcp@2.7.15 docs search --query "how to configure stripe payments"
+npx -y momen-mcp@2.7.15 docs get-page --path "/03_data/01_database_basics"
 ```
 
 `docs search` returns `{ path, title, url }` ranked by relevance; `url` is a public HTTPS link you can cite. Pass a returned `path` to `docs get-page` to read the full markdown. Search before answering how-to questions, and ground every claim in the retrieved page.
