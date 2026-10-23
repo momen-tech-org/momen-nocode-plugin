@@ -31,8 +31,8 @@ server-side sweep, so a deploy left half-finished overnight is gone the next mor
 No schema session — this ships files, it does not touch the project schema.
 
 ```bash
-npx -y momen-mcp@2.7.15 project set-current --projectExId <exId>
-npx -y momen-mcp@2.7.15 site deploy --dir ./dist --target BETA
+npx -y momen-mcp@2.8.0 project set-current --projectExId <exId>
+npx -y momen-mcp@2.8.0 site deploy --dir ./dist --target BETA
 ```
 
 `site deploy` does the whole protocol in one call: it scans the directory, declares the
